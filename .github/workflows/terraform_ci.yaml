@@ -34,6 +34,7 @@ jobs:
       - uses: terraform-linters/setup-tflint@v3
         name: Setup TFLint
         with:
+          tflint_wrapper: true
           tflint_version: v0.44.1
 
       - name: Run TFLint
@@ -49,3 +50,6 @@ jobs:
           # https://github.com/terraform-linters/tflint/blob/master/docs/user-guide/plugins.md#avoiding-rate-limiting
           GITHUB_TOKEN: ${{ github.token }}
        
+      - run: echo ${{ steps.tflint.outputs.stdout }}
+      - run: echo ${{ steps.tflint.outputs.stderr }}
+      - run: echo ${{ steps.tflint.outputs.exitcode }}
