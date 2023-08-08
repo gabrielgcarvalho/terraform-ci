@@ -22,7 +22,7 @@ resource "aws_instance" "hello_world" {
   user_data = base64encode(<<EOF
 #!/bin/bash
 yum update -y
-echo Hello World! <${terraform.workspace}> | tee index.html
+echo Hello World! ${terraform.workspace} | tee index.html
 python3 -m http.server 8080 --directory $(pwd) &
 EOF
   )
