@@ -31,14 +31,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - uses: terraform-linters/setup-tflint@v3
-        with:
-          tflint_wrapper: true
-
-      - id: tflint
-        run: |
-          tflint --init --config config/tflint-configs/tflint.aws.hcl
-          tflint -f compact
-          echo ${stdout}
-          echo ${stderr}
-          echo ${exitcode}
+      - name: Run Static Analysis
+        env:
+          GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
+        uses: ./.github/actions/terraform-static-analysis
+      
