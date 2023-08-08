@@ -8,10 +8,11 @@ RUN apk update && apk add --no-cache \
     ca-certificates \
     jq \
     python3 \
-    py3-pip
+    py3-pip \
+    bash
 
-# Install tflint
-RUN curl -fsSL https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | sh
+#Install tflint
+RUN curl https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
 
 COPY entrypoint.sh /entrypoint.sh
 COPY tflint-configs /tflint-configs
