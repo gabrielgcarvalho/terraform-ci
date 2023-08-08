@@ -31,30 +31,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Run TFLint
-        id: tflint
-        run: |
-          #Install tflint
-          curl https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+      - uses: terraform-linters/setup-tflint@v3
+        with:
+          tflint_wrapper: true
 
-          # TF Lint Configuration
-          tflint_config="config/tflint-configs/tflint.aws.hcl"
+      - id: tflint
+        run: tflint -f compact
 
-          echo "Running tflint --init..."
-          tflint --init --config "$tflint_config"
-
-          tflint_output=$(tflint --chdir terraform  2>&1)
-
-          # Capture the exit code of the tflint command
-          tflint_exitcode=$((tflint_exitcode + $?))
-
-          if [ $tflint_exitcode -eq 0 ]; then
-              TFLINT_STATUS=":white_check_mark: Success"
-          else
-              TFLINT_STATUS=":x: Failed"
-          fi
-
-          bash scripts/comment-pr.sh "<details><summary>:mag:TFLint Check ${TFLINT_STATUS}</summary>${tflint_output}</details>"
-
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+      - run: echo ${{ steps.tflint.outputs.stdout }}
+      - run: echo ${{ steps.tflint.outputs.stderr }}
+      - run: echo ${{ steps.tflint.outputs.exitcode }}
