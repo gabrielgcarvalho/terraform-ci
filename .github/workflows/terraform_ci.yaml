@@ -31,8 +31,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Run Static Analysis
+      - name: Run TFLint
         env:
           GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
-        uses: ./.github/actions/terraform-static-analysis
-      
+        uses: ./.github/actions/tflint
