@@ -37,6 +37,7 @@ jobs:
 
       - id: tflint
         run: |
+          tflint --init --config config/tflint-configs/tflint.aws.hcl
           tflint -f compact
           echo ${stdout}
           echo ${stderr}
