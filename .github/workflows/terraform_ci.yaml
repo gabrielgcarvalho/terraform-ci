@@ -37,7 +37,14 @@ jobs:
           tflint_version: v0.44.1
 
       - name: Run TFLint
-        run: tflint --init && tflint -f compact 
+        run: |
+          # TF Lint Configuration
+          tflint_config="config/tflint-configs/tflint.aws.hcl"
+
+          echo "Running tflint --init..."
+          tflint --init --config "$tflint_config"
+
+          tflint --chdir terraform/ -f compact 
         env:
           # https://github.com/terraform-linters/tflint/blob/master/docs/user-guide/plugins.md#avoiding-rate-limiting
           GITHUB_TOKEN: ${{ github.token }}
