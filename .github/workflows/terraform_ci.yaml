@@ -48,6 +48,7 @@ jobs:
 
       - name: Run TFLint
         run: tflint --disable-rule=terraform_unused_declarations --chdir terraform --format sarif > tflint.sarif
+        continue-on-error: true
 
       - name: Upload TFLint SARIF file
         uses: github/codeql-action/upload-sarif@v2
