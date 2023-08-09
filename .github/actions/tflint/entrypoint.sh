@@ -10,16 +10,12 @@ echo "Running tflint --init..."
 tflint --init --config "$tflint_config"
 
 # Run tflint on the current directory and capture the output
-tflint_output=$(tflint --config "$tflint_config" --chdir terraform 2>&1)
+tflint_output=$(tflint --config "$tflint_config" --chdir terraform -f sarif 2>&1)
 
 # Capture the exit code of the tflint command
 tflint_exitcode=$((tflint_exitcode + $?))
-echo "tflint_exitcode=${tflint_exitcode}"
 
- if [ $tflint_exitcode -eq 0 ]; then
-    TFLINT_STATUS=":white_check_mark: Success"
-else
-    TFLINT_STATUS=":x: Failed"
-fi
+# Save the TFLint SARIF output to a file
+echo "tflint.sarif=$tflint_output" >> "$GITHUB_OUTPUT"
 
-bash scripts/comment-pr.sh "<details><summary>:mag:TFLint Check ${TFLINT_STATUS}</summary>${tflint_output}</details>"
+exit $tflint_exitcode
