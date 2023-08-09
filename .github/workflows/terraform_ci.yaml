@@ -47,7 +47,7 @@ jobs:
         run: tflint --init --config config/tflint/tflint.aws.hcl
 
       - name: Run TFLint
-        run: tflint --disable-rule=terraform_unused_declarations --format sarif > tflint.sarif
+        run: tflint --disable-rule=terraform_unused_declarations --chdir terraform --format sarif > tflint.sarif
 
       - name: Upload TFLint SARIF file
         uses: github/codeql-action/upload-sarif@v2
