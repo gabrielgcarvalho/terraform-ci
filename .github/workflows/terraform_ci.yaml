@@ -44,7 +44,7 @@ jobs:
           tflint_version: latest
 
       - name: Init TFLint
-        run: tflint --init
+        run: tflint --init --config config/tflint/tflint.aws.hcl
 
       - name: Run TFLint
         run: tflint --disable-rule=terraform_unused_declarations --format sarif > tflint.sarif
