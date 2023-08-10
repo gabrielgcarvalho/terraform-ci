@@ -1,13 +1,6 @@
 name: "Terraform CI"
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - "terraform/**"
-      - ".github/workflows/terraform_ci.yaml"
-
   pull_request:
     branches:
       - main
@@ -21,6 +14,8 @@ jobs:
       contents: read
       security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
       pull-requests: write
+    env:
+      GH_TOKEN: ${{ secrets.REPO_TOKEN }}
     name: "🛡️Terraform Static Analysis"
     runs-on: ubuntu-latest
 
@@ -47,24 +42,22 @@ jobs:
         run: tflint --init --config config/tflint/tflint.aws.hcl
 
       - name: Run TFLint
-        run: tflint --disable-rule=terraform_unused_declarations --chdir terraform --format sarif > tflint.sarif
+        run: tflint --disable-rule=terraform_unused_declarations --chdir terraform --format compact > tflint.txt
 
       - name: Checkov GitHub Action
         uses: bridgecrewio/checkov-action@v12
         if: success() || failure()
         with:
           # This will add both a CLI output to the console and create a results.sarif file
-          output_format: cli,sarif
-          output_file_path: console,checkov.sarif
-      
-      - name: Upload TFLint SARIF file
-        uses: github/codeql-action/upload-sarif@v2
-        if: success() || failure()
-        with:
-          sarif_file: tflint.sarif
+          output_format: cli, github_failed_only
+          output_file_path: console,checkov.txt
 
-      - name: Upload Checkov SARIF file
-        uses: github/codeql-action/upload-sarif@v2
+      - name: Comment TFLint output on PR
         if: success() || failure()
-        with:
-          sarif_file: checkov.sarif
+        run: |
+          gh pr comment ${{ github.event.pull_request.number }} --body-file=tflint.txt
+
+      - name: Comment Checkov output on PR
+        if: success() || failure()
+        run: |
+          gh pr comment ${{ github.event.pull_request.number }} --body-file=checkov.txt
