@@ -53,11 +53,9 @@ jobs:
       - name: Comment TFLint output on PR
         if: success() || failure()
         run: |
-          cat tflint.sarif
           gh pr comment ${{ github.event.pull_request.number }} --body-file=tflint.txt
 
       - name: Comment Checkov output on PR
         if: success() || failure()
         run: |
-          cat tflint.sarif
           gh pr comment ${{ github.event.pull_request.number }} --body-file=checkov.txt
